@@ -66,12 +66,17 @@ def format_neighborhood(neighborhood):
 
 
 ```python
-streeteasy_url = "https://streeteasy.com/for-rent/east-village"
+# Ask the user for the neighborhood input
+neighborhood = input("Enter the NYC neighborhood you want to search for (e.g., 'East Village'): ").strip()
+formatted_neighborhood = format_neighborhood(neighborhood)
+
+# Construct the URL for the specific neighborhood
+streeteasy_url = f"https://streeteasy.com/for-rent/{formatted_neighborhood}"
 all_listings = []
 
 page = 1
 while True:
-    print(f"Scraping page {page}...")
+    print(f"Scraping page {page} of {neighborhood}...")
     url = f'{streeteasy_url}?page={page}'
     listings = scrape(url)
 
@@ -81,18 +86,37 @@ while True:
     all_listings.extend(listings)
     page += 1
 
-    time.sleep(random.uniform(1, 3))
+    time.sleep(random.uniform(1, 3))  # Sleep to avoid overwhelming the server
 
+# Convert the results into a DataFrame
 df = pd.DataFrame(all_listings)
-print("Scraping Complete")
+
+if df.empty:
+    print(f"No listings found for {neighborhood}.")
+else:
+    print("Scraping Complete")
+    print(df)
 ```
-- This part uses the previous function to scrape the Streeteasy URL and saves the results into a Pandas DataFrame.
-- Variables initialized:
-  - `streeteasy_url`: Stores the base URL for the Streeteasy rental listings in the East Village.
-  - `all_listings`: An empty list initialized to hold all the listings scraped from multiple pages.
-- The `While` loop scrapes the listings page by page and runs indefinitely until no more listings are found. Also updates on what page it's on
-- Url is formatted the way it's on the StreetEasy site and key information is replaced to change from page to page
-- If `listings` is an empty list, the loop breaks
-- Listings from the current page are appended to `all_listings`
-- `time.sleep(random.uniform(1, 3))` is to mimic human behavior
-- Pandas Dataframe is created from the `all_listings` list
+- This part of the code dynamically scrapes StreetEasy for rental listings in a specific New York City neighborhood based on user input, saving the results into a Pandas DataFrame.
+  
+- **Variables initialized**:
+  - `neighborhood`: Takes user input for the desired neighborhood (e.g., "East Village").
+  - `formatted_neighborhood`: Formats the input into URL-compatible form (lowercase and hyphenated).
+  - `streeteasy_url`: Constructs the URL for StreetEasy rental listings in the user-specified neighborhood.
+  - `all_listings`: An empty list that stores the listings collected from multiple pages.
+
+- **While loop**:
+  - The loop iterates through the pages of listings for the neighborhood, scraping one page at a time.
+  - `print(f"Scraping page {page} of {neighborhood}...")` informs the user about the current page being scraped.
+  - `url`: The loop updates the URL for each page of listings.
+  - The `scrape(url)` function is called to retrieve and extract listings from each page.
+  - If `listings` is empty (no more pages to scrape), the loop breaks.
+  - The extracted listings are added to the `all_listings` list.
+
+- **Page Management and Timing**:
+  - The loop increments `page` to move through the listings pages on StreetEasy.
+  - `time.sleep(random.uniform(1, 3))` introduces a delay between page requests to mimic human-like browsing behavior and avoid overloading the server.
+
+- **Creating the DataFrame**:
+  - After scraping all the pages, a Pandas DataFrame `df` is created from the `all_listings` list.
+  - If no listings are found, a message informs the user. Otherwise, the DataFrame is printed, showing the scraped listings.
