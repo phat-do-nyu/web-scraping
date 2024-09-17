@@ -19,8 +19,8 @@ Looking for an apartment is a very long and tedious process and StreetEasy defin
 # Instructions:
 
 1. Choose the neighborhood on StreetEasy
-2. Copy the URL of the results page into the code
-3. Run the Google Colab cells in order
+2. Run the code
+3. Enter the neighborhood into the console when prompted
 4. Get output of apartment listings
 
 # Code Explanation:
@@ -52,6 +52,18 @@ def scrape(streeteasy_url):
   - If successful, this information is stored in a dictionary with keys `Address` and `Price`, which is added to the `listings` list.
 - Uses the `try-except` block to handle cases where the text might not be in the right format
 - Returns a list of dictionaries containing the address and price of the apartments
+
+
+```python
+def format_neighborhood(neighborhood):
+    # Convert the neighborhood name into a format suitable for the StreetEasy URL
+    return neighborhood.lower().replace(" ", "-")
+```
+- This function takes a `neighborhood` name as input and converts it into a URL-friendly format.
+- It uses the `.lower()` method to convert all characters in the neighborhood name to lowercase, ensuring consistency with StreetEasy URL formatting.
+- The `.replace(" ", "-")` method replaces any spaces in the neighborhood name with hyphens (`-`), since StreetEasy uses hyphenated names for URLs (e.g., "East Village" becomes "east-village").
+- The formatted neighborhood name is returned, ready to be appended to the StreetEasy base URL for scraping listings in that specific neighborhood.
+
 
 ```python
 streeteasy_url = "https://streeteasy.com/for-rent/east-village"
